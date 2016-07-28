@@ -4,10 +4,11 @@ library(pdftools)
 library(readxl)
 
 mkcsv = function(x){
-  # parse the columns by at least two spaces
+  # parse the columns by at least two spaces, replace spaces with commas
   tm = gsub("[ ]{2,}",",",x)
   if (length(unlist(strsplit(tm,","))) < 6){
-    # correct for rows that missed the correct parsing (at least one per page)
+    # correct for rows that missed the correct parsing (at least one per page), replace ending spaces with comma
+    # determined based on inspection of the initial results
     tm = gsub(' (?=[^ ]+$)',",",tm, perl=TRUE)
   }
   tm
@@ -21,19 +22,20 @@ d = "/path/to/user/statements/directory/"
 ff = list.files(d)
 
 for (f in ff){
-  nn = gsub(".[^.]*$","",f)
-  fi = pdf_text(paste0(d,f),upw=rr$pass[rr$name==nn])
+  nn = gsub(".[^.]*$","",f)  # get user name
+  fi = pdf_text(paste0(d,f),upw=rr$pass[rr$name==nn])  # read in pdf as text
 
   lines=c()
   for (p in 1:length(fi)){
-    inp = gsub(",","",fi[p])  # get rid of commas
+    inp = gsub(",","",fi[p])  # get rid of commas in balance data -- for csv compatibility
     ll = strsplit(inp,"\n")   # split on lines
-    ll = lapply(ll,grep,pattern="^[A-Z0-9]{10}\\s",value=TRUE)[[1]] # Find transactions
+    # Find transactions, identified by alphanumeric string of 10 length
+    ll = lapply(ll,grep,pattern="^[A-Z0-9]{10}\\s",value=TRUE)[[1]]
     xx = unlist(lapply(ll,mkcsv))
-    lines = c(lines,xx)
+    lines = c(lines,xx)       # add each line to file for user
   }
 
-  fileConn = file(paste0("/output/directory/for/data/",nn,".csv"))
-  write(paste(lines,collapse="\n"),fileConn)
+  fileConn = file(paste0("/output/directory/for/data/",nn,".csv"))  # generate file name
+  write(paste(lines,collapse="\n"),fileConn)  # save it as a csv
   close(fileConn)
 }

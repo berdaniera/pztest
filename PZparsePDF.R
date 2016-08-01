@@ -1,3 +1,10 @@
+##############################
+# PZ test analysis
+# Aaron Berdanier
+# aaron.berdanier@gmail.com
+# 1 August 2016
+
+
 #install.packages("pdftools")
 #install.packages("readxl")
 library(pdftools)

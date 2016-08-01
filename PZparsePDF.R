@@ -3,6 +3,7 @@
 library(pdftools)
 library(readxl)
 
+# Format data for csv
 mkcsv = function(x){
   # parse the columns by at least two spaces, replace spaces with commas
   tm = gsub("[ ]{2,}",",",x)
@@ -14,16 +15,21 @@ mkcsv = function(x){
   tm
 }
 
+
+dd = readline(prompt="Enter a directory path: ")
+setwd(dd)
+
 # Bring in passwrd data
-rrfile = "/path/to/user/data/file.xlsx"
+rrfile = "PZborrowers.xlsx"
 rr = read_excel(rrfile,col_names=c("name","pass","date"),skip=2,col_types=rep("text",3))
 
-d = "/path/to/user/statements/directory/"
+d = "PZstatements/"
 ff = list.files(d)
 
 for (f in ff){
   nn = gsub(".[^.]*$","",f)  # get user name
-  fi = pdf_text(paste0(d,f),upw=rr$pass[rr$name==nn])  # read in pdf as text
+  pp = rr$pass[rr$name==nn] # open pass
+  fi = pdf_text(paste0(d,f),upw=pp)  # read in pdf as text
 
   lines=c()
   for (p in 1:length(fi)){
@@ -35,7 +41,7 @@ for (f in ff){
     lines = c(lines,xx)       # add each line to file for user
   }
 
-  fileConn = file(paste0("/output/directory/for/data/",nn,".csv"))  # generate file name
+  fileConn = file(paste0("data/",pp,".csv"))  # generate file name
   write(paste(lines,collapse="\n"),fileConn)  # save it as a csv
   close(fileConn)
 }

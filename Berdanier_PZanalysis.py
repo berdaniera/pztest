@@ -148,8 +148,8 @@ Scores = [x if x!= 0 else 1 for x in Scores] # zero scores get 1
 
 # HISTOGRAM OF PREDICTED SCORES
 plt.hist(Scores,bins=10,range=(0,100))
-#plt.show()
-plt.savefig('/home/aaron/Desktop/PZ2.pdf')
+plt.show()
+#plt.savefig('/home/aaron/Desktop/PZ2.pdf')
 
 # Add scores to sheet
 xl['score'] = [x[1] for x in sorted(zip(order, Scores))]
@@ -157,5 +157,4 @@ xl['score'] = [x[1] for x in sorted(zip(order, Scores))]
 xl.to_excel(d+"Berdanier_PZresults.xlsx",header=["Name","ID Number","Date","Predicted Score"],index=False)
 
 ##############################
-
-pa.DataFrame(StandardScaler().fit_transform(XX)).to_excel('/home/aaron/Desktop/pzs.xlsx',header=row_labels,index=False)
+#pa.DataFrame(StandardScaler().fit_transform(XX)).to_excel('/home/aaron/Desktop/pzs.xlsx',header=row_labels,index=False)
